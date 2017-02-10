@@ -1,0 +1,32 @@
+<div class="container">
+    <h3>Welcome to MiniURL!</h3>
+    <p>This site helps you create a mini URL out of a standard URL. For more information about this site and the
+        technologies used to create it see the <a href="/about">About</a> page</p>
+    <hr>
+    <row>
+        <div class="col-sm-6">
+            <row>
+                <div class="form-group">
+                    <label for="urlString">Enter a long URL:</label>
+                    <input type="text" class="form-control" id="urlString" ng-model="$ctrl.url" maxlength="$ctrl.urlMaxSize">
+                </div>
+                <div class="form-group">
+                    <label for="customAlias" class="control-label">Custom alias (optional):</label>
+                    <input type="text" class="form-control" id="customAlias" ng-model="$ctrl.customAlias"
+                           maxlength="$ctrl.aliasMaxSize" placeholder="">
+                    <p class="help-block">May contain letters, numbers, and dashes, but not begin or end with dashes.
+                        the custom URL will look like: </p>
+                    <p class="help-block">http://{{ $ctrl.host }}/{{ $ctrl.customAlias }}</p>
+                </div>
+            </row>
+            <div class="form-group">
+                <button class="btn btn-primary" ng-disabled="!$ctrl.url" ng-click="$ctrl.submitUrl()">Shrink</button>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div uib-alert ng-if="$ctrl.alert" ng-class="'alert-' + ($ctrl.alert.type || 'warning')" close="$ctrl.closeAlert()">{{$ctrl.alert.msg}}</div>
+            </div>
+        </div>
+    </row>
+</div>

@@ -1,0 +1,33 @@
+{
+  "name": "mini_url",
+  "version": "1.0.0",
+  "description": "Shrink URL web app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Luis Garcia Alanis",
+  "license": "MIT",
+  "dependencies": {
+    "angular": "^1.6.1",
+    "angular-ui-bootstrap": "^2.5.0",
+    "angular-ui-router": "^1.0.0-rc.1",
+    "boom": "^4.2.0",
+    "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-sourcemaps": "^2.4.0",
+    "gutil": "^1.6.4",
+    "hapi": "^16.1.0",
+    "inert": "^4.1.0",
+    "mongodb": "^2.2.22",
+    "simple-node-logger": "^0.93.14",
+    "stringify": "^5.1.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.9.0"
+  },
+  "devDependencies": {
+    "gulp-jison": "^1.2.0",
+    "mocha": "^3.2.0"
+  }
+}

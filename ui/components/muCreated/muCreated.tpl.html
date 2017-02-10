@@ -1,0 +1,12 @@
+<div class="container">
+    <h3>MiniURL created successfully!</h3>
+    <p>You can use share this url with anyone. When they click on the MiniUrl they will be redirected to the original
+    URL you provided.</p>
+    <br>
+    <p>The <strong>MiniURL</strong> is {{ ::$ctrl.miniUrl.length }} characters long while the <strong>original URL</strong> is {{ ::$ctrl.url.length }} characters long</p>
+    <p><strong>MiniURL generated:</strong> {{ ::$ctrl.miniUrl }}</p>
+    <p><a href="{{ ::$ctrl.miniUrl }}" target="_blank">Open in new window or tab</a></p>
+    <p class="wrap-words"><strong>Original URL:</strong> {{ ::$ctrl.url }}</p>
+    <hr>
+    <a class="btn btn-primary" href="/">Create another MiniURL</a>
+</div>
