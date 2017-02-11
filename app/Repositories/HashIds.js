@@ -4,32 +4,45 @@ const hashIds = require('../../global/globals').hashIds;
 const log = require('../libs/logger');
 
 class HashIdsRepository {
-    constructor() {
+    /**
+     * Gets the hash/url for the given id
+     *
+     * @param id
+     */
+    getHashForId(id) {
+        return muDB.miniUrls.findOne({_id: id});
     }
 
-    getId() {
-        return new Promise((resolve, reject) => {
-            muDB.miniUrls.findOne({URL: ''}).then(
-                (doc) => {
-                    if (doc == null) {
-                        this.generateRandomIntIds().then(
-                            () => {
-                                muDB.miniUrls.findOne({URL: ''}).then(
-                                    (doc) => {
-                                        resolve(doc._id);
-                                    }
-                                );
-                            }
-                        );
-                    } else {
-                        resolve(doc);
-                    }
-                },
-                (error) => {
-                    reject(error);
+    /**
+     * Gets the next available hash without URL
+     *
+     * @returns {*|Promise.<TResult>}
+     */
+    getNextAvailableHash() {
+        return muDB.miniUrls.findOne({URL: ''}).then(
+            (doc) => {
+                /**
+                 * If we dont find one we generate some and then try again
+                 */
+                if (doc == null) {
+                    this.generateRandomIntIds().then(
+                        () => {
+                            muDB.miniUrls.findOne({URL: ''}).then(
+                                (doc) => {
+                                    return doc;
+                                },
+                                (error) => {
+                                    log.error('We should never not find an empty URL after generateRandomIntIds()');
+                                    log.error(error);
+                                }
+                            );
+                        }
+                    );
+                } else {
+                    return doc;
                 }
-            );
-        });
+            }
+        );
     }
 
     /**
@@ -179,23 +192,6 @@ class HashIdsRepository {
         }
 
         return result;
-    }
-
-    /**
-     * Convert a base32 string into an integer
-     *
-     * @param hash
-     * @returns {number}
-     */
-    base32ToInt(hash) {
-        let number = 0;
-
-        for (let index = 0 ; index < hash.length ; index++) {
-            number *= 32;
-            number += hashIds.base32Lookup.indexOf(hash[index]);
-        }
-
-        return number;
     }
 
     /**

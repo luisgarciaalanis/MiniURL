@@ -66,7 +66,7 @@ class MiniUrls {
                     return doc.hash;
                 }
 
-                return HashIds.getId().then(
+                return HashIds.getNextAvailableHash().then(
                     (doc) => {
                         muDB.miniUrls.findOneAndUpdate({ _id: doc._id}, {$set: { URL: stringUrl }}).catch(
                             (error) => {
