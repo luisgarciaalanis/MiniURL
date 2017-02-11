@@ -1,7 +1,7 @@
 let assert = require('assert');
 let urlParser = require('../lib/urlParser/urlParser');
 
-describe('Array', () => {
+describe('Url parser tests', () => {
     /**
      * TESTING PASSING URLS
      */

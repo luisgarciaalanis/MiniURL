@@ -1,7 +1,7 @@
 const urlParser = require('../../lib/urlParser/urlParser');
 const MiniUrlRepository = require('../Repositories/MiniUrls');
 const hashIdsConstants = require('../../global/globals').hashIds;
-const customIdsConstants = require('../../global/globals').curomeIds;
+const customIdsConstants = require('../../global/globals').customAlias;
 const Boom = require('boom');
 
 class ShrinkUrlController {

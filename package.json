@@ -27,7 +27,9 @@
     "watchify": "^3.9.0"
   },
   "devDependencies": {
+    "chromedriver": "^2.27.2",
     "gulp-jison": "^1.2.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "selenium-webdriver": "^3.0.1"
   }
 }
