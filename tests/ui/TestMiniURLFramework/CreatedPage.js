@@ -1,7 +1,7 @@
 'use strict';
 const browser = require('./Browser');
 const Selenium = require('selenium-webdriver');
-const testURL = process.env.MINIURL_TEST_URL;
+const testURL = require('../../lib/testUrl');
 
 class CreatedPage {
     constructor() {

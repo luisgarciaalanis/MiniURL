@@ -1,7 +1,5 @@
 'use strict';
-const testURL = process.env.MINIURL_TEST_URL;
-
-if (typeof testURL === 'undefined') throw 'MINIURL_TEST_URL enviroment variable needs to be defined.'
+require('../lib/testUrl');
 const t = require('./TestMiniURLFramework/t');
 const homePage = require('./TestMiniURLFramework/HomePage');
 const createdPage = require('./TestMiniURLFramework/CreatedPage');
