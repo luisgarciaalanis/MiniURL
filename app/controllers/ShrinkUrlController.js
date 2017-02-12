@@ -39,6 +39,10 @@ class ShrinkUrlController {
             return false;
         }
 
+        if (url.startsWith('javascript:')) {
+            reply(Boom.forbidden('javascript is not allowed!'));
+        }
+
         if (!url.length > 2000) {
             reply(Boom.uriTooLong('URL should be less or equal to 2000 characters!'));
             return false;

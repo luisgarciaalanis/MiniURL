@@ -4,11 +4,7 @@ const chakram = require('chakram');
 const expect = chakram.expect;
 
 class ApiHelpers {
-    static TestSuccessfulPostWithNoAlias(url, expectRedirect) {
-        if (typeof expectRedirect === 'undefined') {
-            expectRedirect = url;
-        }
-
+    static TestSuccessfulPostWithNoAlias(url) {
         return chakram.post(`${testURL}/api/v1/shrink`, { url:url, alias:'' }).then(
             (response) => {
                 let responseSchema = {
@@ -25,7 +21,7 @@ class ApiHelpers {
                 ApiHelpers.lastAlias = response.body.alias;
                 return chakram.get(`${testURL}/${response.body.alias}`, { followRedirect:false }).then((response) => {
                     expect(response).to.have.status(302);
-                    expect(response).to.have.header('location', expectRedirect);
+                    expect(response).to.have.header('location', url);
                     return chakram.wait();
                 });
             }
@@ -83,6 +79,48 @@ class ApiHelpers {
                     expect(response).to.have.header('location', url);
                     return chakram.wait();
                 });
+            }
+        );
+    }
+
+    static TestFailWithNoAlias(url, expectedError) {
+        if (typeof expectedError == 'undefined') {
+            expectedError = 400;
+        }
+
+        return chakram.post(`${testURL}/api/v1/shrink`, { url:url, alias:'' }).then(
+            (response) => {
+                let responseSchema = {
+                    type: 'object',
+                    properties: {
+                        alias: {
+                            type: 'string'
+                        }
+                    }
+                };
+                expect(response).to.have.status(400);
+                return chakram.wait();
+            }
+        );
+    }
+
+    static TestFailWithAlias(url, alias, expectedError) {
+        if (typeof expectedError == 'undefined') {
+            expectedError = 400;
+        }
+
+        return chakram.post(`${testURL}/api/v1/shrink`, { url:url, alias:alias }).then(
+            (response) => {
+                let responseSchema = {
+                    type: 'object',
+                    properties: {
+                        alias: {
+                            type: 'string'
+                        }
+                    }
+                };
+                expect(response).to.have.status(400);
+                return chakram.wait();
             }
         );
     }
