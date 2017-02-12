@@ -36,6 +36,7 @@ describe('MiniURL creation without alias:', function() {
             [ 'Space before #', 'https://en.wikipedia.org/wiki/Uniform_Resource_Locator #Syntax' ],
             [ 'Space after # 1', 'https://en.wikipedia.org/wiki/Uniform_Resource_Locator# Syntax' ],
             [ 'Space after # 2', 'https://en.wikipedia.org/wiki/Uniform_Resource_Locator# Syn tax' ],
+            [ 'TEST123', 'https://redacted/SomePage.aspx?ACCESS_ERRORCODE=a%27;alert(9)//' ],
         ];
 
         for (let index = 0 ; index < failingURLs.length; index++) {

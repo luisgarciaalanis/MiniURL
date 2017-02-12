@@ -26,7 +26,7 @@ function muCreateComponent(ShrinkUrlService, $state) {
     this.verifyUrlIsValid = function () {
         var result = false;
         this.url = this.url.trim();
-        if (urlParser.parse(this.url, true)) {
+        if (urlParser.parse(this.url)) {
             var urlLower = this.url.toLowerCase();
             if (!urlLower.startsWith('http://') && !urlLower.startsWith('https://') && !urlLower.startsWith('mailto:')) {
                 this.url = 'http://' + this.url;
