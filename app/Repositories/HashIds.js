@@ -48,38 +48,6 @@ class HashIdsRepository {
     }
 
     /**
-     * Gets the next available hash without URL
-     *
-     * @returns {*|Promise.<TResult>}
-     */
-    getNextAvailableHash() {
-        return muDB.miniUrls.findOne({URL: ''}).then(
-            (doc) => {
-                /**
-                 * If we dont find one we generate some and then try again
-                 */
-                if (doc == null) {
-                    return this.generateRandomIntIds().then(
-                        () => {
-                            return muDB.miniUrls.findOne({URL: ''}).then(
-                                (doc) => {
-                                    return doc;
-                                },
-                                (error) => {
-                                    log.error('We should never not find an empty URL after generateRandomIntIds()');
-                                    log.error(error);
-                                }
-                            );
-                        }
-                    );
-                } else {
-                    return doc;
-                }
-            }
-        );
-    }
-
-    /**
      * Insert the next batch of random hashIdInts into the database
      *
      * @param randomInts
@@ -99,10 +67,16 @@ class HashIdsRepository {
                 let bulk = muDB.miniUrls.initializeUnorderedBulkOp();
                 let insertUntil = (insertSoFar + insertAtOnce) < hashIds.createAtOnce ? insertSoFar + insertAtOnce : hashIds.createAtOnce;
 
+                /**
+                 * For performance gains by indexing URL with unique == true, we need to put unique values that are not
+                 * URL so that we do find and updates based on strings begining with -. This change made a HUGE performance
+                 * on the insertion of data. From seconds to less than 10 ms when dealing with millions of documents.
+                 */
                 for (insertSoFar ; insertSoFar < insertUntil ; insertSoFar++) {
+                    let alias = this.intToBase32(randomInts[insertSoFar]);
                     bulk.insert({
-                        alias:   this.intToBase32(randomInts[insertSoFar]),
-                        URL: ''
+                        alias: alias,
+                        URL: `-${alias}`
                     });
                 }
 

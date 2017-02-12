@@ -79,10 +79,12 @@ class MuDB {
              */
             this.miniUrls = this[privates].db.collection(dbConfig.miniUrlsCollectionName);
             this.miniUrls.createIndex({ alias: 1 }, { unique: true });
-            this.miniUrls.createIndex({ url: 1 }, { unique: false });
+            this.miniUrls.createIndex({ URL: 1 }, { unique: true });
             this.miniUrlsCustom = this[privates].db.collection(dbConfig.miniUrlsCustomCollectionName);
             this.miniUrlsCustom.createIndex({ alias: 1 }, { unique: true })
             this.hashIdInfo = this[privates].db.collection(dbConfig.hashIdInfoCollectionName);
+            /** The following line will fail if nextIdToGenerate exists */
+            this.hashIdInfo.insertOne({ _id: 'nextIdToGenerate', nextIdToGenerate: 0}).catch(() => {});
 
             /**
              * Just an event to log incase of an error
