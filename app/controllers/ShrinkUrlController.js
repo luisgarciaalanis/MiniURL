@@ -41,6 +41,7 @@ class ShrinkUrlController {
 
         if (url.startsWith('javascript:')) {
             reply(Boom.forbidden('javascript is not allowed!'));
+            return false;
         }
 
         if (!url.length > 2000) {
@@ -57,17 +58,25 @@ class ShrinkUrlController {
     }
 
     static VerifyAliasOrFail(alias, reply) {
-        let forbiddenAliases = [ 'api', 'css', 'js', 'created', 'about', 'notfound' ];
+        let forbiddenAliases = [ 'api', 'css', 'js', 'created', 'about', 'notfound', 'favicon.ico' ];
         if (alias.length > 0) {
 
             if (alias.length > 20) {
-                reply(Boom.badRequest('Alias should be at the most 20 charactes long.'));
+                reply(Boom.forbidden('Alias should be at the most 20 charactes long.'));
                 return false;
             }
 
-            if (alias.indexOf(' ') > -1) {
-                reply(Boom.badRequest('Alias should not contain spaces.'));
+            /** Parser should catch this but what if parser changes, we explicitly check for this */
+            if (alias.startsWith('javascript:')) {
+                reply(Boom.forbidden('javascript is not allowed!'));
                 return false;
+            }
+
+            for (let badAlias of forbiddenAliases) {
+                if (alias.toLowerCase() == badAlias) {
+                    reply(Boom.conflict('Alias already exists. Please try another one. Don\'t be sneaky!'));
+                    return false;
+                }
             }
 
             if (!customIdsConstants.regExp.test(alias)) {
@@ -78,13 +87,6 @@ class ShrinkUrlController {
             if (alias[0] == '-' || alias[alias.length - 1] == '-') {
                 reply(Boom.badRequest('Alias should contain dashes (-) at the beginning or end.'));
                 return false;
-            }
-
-            for (let badAlias of forbiddenAliases) {
-                if (alias.toLowerCase() == badAlias) {
-                    reply(Boom.conflict('Alias already exists. Please try another one. Don\'t be sneaky!'));
-                    return false;
-                }
             }
         }
 

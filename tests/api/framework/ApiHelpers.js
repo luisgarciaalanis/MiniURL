@@ -1,4 +1,4 @@
-const testURL = process.env.MINIURL_TEST_URL;
+const testURL = require('../../lib/testUrl');
 const assert = require('assert');
 const chakram = require('chakram');
 const expect = chakram.expect;
@@ -98,7 +98,7 @@ class ApiHelpers {
                         }
                     }
                 };
-                expect(response).to.have.status(400);
+                expect(response).to.have.status(expectedError);
                 return chakram.wait();
             }
         );
@@ -119,7 +119,7 @@ class ApiHelpers {
                         }
                     }
                 };
-                expect(response).to.have.status(400);
+                expect(response).to.have.status(expectedError);
                 return chakram.wait();
             }
         );

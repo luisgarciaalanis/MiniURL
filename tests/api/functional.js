@@ -1,16 +1,10 @@
 'use strict';
-let testURL = process.env.MINIURL_TEST_URL;
-
-if (typeof testURL === 'undefined') throw 'MINIURL_TEST_URL enviroment variable needs to be defined.'
+require('../lib/testUrl');
 const assert = require('assert');
 const chakram = require('chakram');
-const expect = chakram.expect;
 const ApiHelpres = require('./framework/ApiHelpers');
-const mochaTimeOut = 3000; //ms
 
 describe('MiniURL creation without alias:', function() {
-//    this.timeout(mochaTimeOut);
-
     /**
      * Pool of functional URL's to test
      */
@@ -64,8 +58,6 @@ describe('MiniURL creation without alias:', function() {
 });
 
 describe('MiniURL creation with alias:', function() {
-    this.timeout(mochaTimeOut);
-
     /**
      * Pool of functional URL's to test
      */
