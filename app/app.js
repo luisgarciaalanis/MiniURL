@@ -3,8 +3,8 @@ const Hapi = require('hapi');
 const Inert = require('inert');
 const server = new Hapi.Server();
 const Routes = require('./routes');
-const MiniUrls = require('./Repositories/MiniUrls');
-const muDb = require('./database/muDB');
+let muDb = require('./database/muDB');
+const HashIds = require('./Repositories/HashIds');
 const log = require('./libs/logger');
 
 
@@ -27,14 +27,18 @@ Routes.Init(server);
 
 muDb.ready().then(
     () => {
-        server.start((err) => {
-            if (err) {
-                throw err;
-            }
-            console.log('Server running at:', server.info.uri);
-        });
+        HashIds.seedIfEmpty().then(
+            () => {
+                server.start((err) => {
+                    if (err) {
+                        throw err;
+                    }
+                    console.log('Server running at:', server.info.uri);
+                });
 
-        log.info('Database is ready!');
+                log.info('Database is ready!');
+            }
+        );
     },
     (error) => {
         log.info('Database is not ready!');

@@ -7,7 +7,7 @@ const Boom = require('boom');
 /**
  * If this privates Symbol() is added to the this pointer of the instance then it wont be visible outside this module.
  */
-const privates = Symbol();
+let privates = Symbol();
 
 /**
  * Handles the database connection
@@ -83,7 +83,6 @@ class MuDB {
             this.miniUrlsCustom = this[privates].db.collection(dbConfig.miniUrlsCustomCollectionName);
             this.miniUrlsCustom.createIndex({ alias: 1 }, { unique: true })
             this.hashIdInfo = this[privates].db.collection(dbConfig.hashIdInfoCollectionName);
-            this.hashIdInfo.insertOne({_id: 'nextIdToGenerate', nextIdToGenerate: 0 }).catch(() => {});
 
             /**
              * Just an event to log incase of an error

@@ -1,5 +1,5 @@
 'use strict';
-const muDB = require('../database/muDB');
+let muDB = require('../database/muDB');
 const hashIds = require('../../global/globals').hashIds;
 const log = require('../libs/logger');
 
@@ -11,6 +11,40 @@ class HashIdsRepository {
      */
     getHashForId(id) {
         return muDB.miniUrls.findOne({_id: id});
+    }
+
+    /**
+     * Seed if empty
+     *
+     * @returns {*|Promise.<TResult>}
+     * @constructor
+     */
+    seedIfEmpty() {
+        return muDB.miniUrls.count().then(
+            (count) => {
+                if (count === 0) {
+                    return muDB.hashIdInfo.count().then(
+                        (count) => {
+                            if (count === 0) {
+                                return muDB.hashIdInfo.insertOne({ _id: 'nextIdToGenerate', nextIdToGenerate: 0}).then(() => {
+                                    log.info('Seeding the database!');
+                                    return this.generateRandomIntIds();
+                                });
+                            } else {
+                                log.info('Seeding the database!');
+                                return this.generateRandomIntIds();
+                            }
+                        },
+                        () => {
+                            log.error('Could not get hashIdInfo count!');
+                        }
+                    );
+                }
+            },
+            () => {
+                log.error('Could not get MiniURL count!');
+            }
+        );
     }
 
     /**
