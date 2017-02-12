@@ -78,7 +78,8 @@ class MuDB {
              * Creates or opens the collections needed
              */
             this.miniUrls = this[privates].db.collection(dbConfig.miniUrlsCollectionName);
-            this.miniUrls.createIndex({ hash: 1 }, { unique: true })
+            this.miniUrls.createIndex({ alias: 1 }, { unique: true });
+            this.miniUrls.createIndex({ url: 1 }, { unique: false });
             this.miniUrlsCustom = this[privates].db.collection(dbConfig.miniUrlsCustomCollectionName);
             this.miniUrlsCustom.createIndex({ alias: 1 }, { unique: true })
             this.hashIdInfo = this[privates].db.collection(dbConfig.hashIdInfoCollectionName);

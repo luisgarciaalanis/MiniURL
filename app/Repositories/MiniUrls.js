@@ -63,17 +63,19 @@ class MiniUrls {
         return muDB.miniUrls.findOne({ URL: stringUrl }).then(
             (doc) => {
                 if (doc) {
-                    return doc.hash;
+                    return doc.alias;
                 }
 
                 return HashIds.getNextAvailableHash().then(
                     (doc) => {
-                        muDB.miniUrls.findOneAndUpdate({ _id: doc._id}, {$set: { URL: stringUrl }}).catch(
+                        return muDB.miniUrls.findOneAndUpdate({ alias: doc.alias }, {$set: { URL: stringUrl }}).then(
+                            () => {
+                                return doc.alias;
+                            },
                             (error) => {
                                 throw muDB.errorHandler(error);
                             }
                         );
-                        return doc.hash;
                     }
                 );
             }
@@ -87,7 +89,7 @@ class MiniUrls {
     getUrl(hash) {
         /** If its a valid hash look on the miniUrls collection */
         if (HashIds.isValidHash(hash)) {
-            return muDB.miniUrls.findOne({ hash: hash }).then((doc) => doc.URL);
+            return muDB.miniUrls.findOne({ alias: hash }).then((doc) => doc.URL);
         }
 
         return muDB.miniUrlsCustom.findOne({ alias: hash }).then((doc) => doc.URL);;

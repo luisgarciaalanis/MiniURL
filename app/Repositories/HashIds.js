@@ -25,9 +25,9 @@ class HashIdsRepository {
                  * If we dont find one we generate some and then try again
                  */
                 if (doc == null) {
-                    this.generateRandomIntIds().then(
+                    return this.generateRandomIntIds().then(
                         () => {
-                            muDB.miniUrls.findOne({URL: ''}).then(
+                            return muDB.miniUrls.findOne({URL: ''}).then(
                                 (doc) => {
                                     return doc;
                                 },
@@ -67,7 +67,7 @@ class HashIdsRepository {
 
                 for (insertSoFar ; insertSoFar < insertUntil ; insertSoFar++) {
                     bulk.insert({
-                        hash:   this.intToBase32(randomInts[insertSoFar]),
+                        alias:   this.intToBase32(randomInts[insertSoFar]),
                         URL: ''
                     });
                 }
