@@ -82,6 +82,9 @@ describe('MiniURL creation with alias:', function() {
     });
 });
 
+/**
+ * These test require DB access to run
+ */
 muDB.ready().then(() => {
     describe('Targetted functional logic tests:', function() {
         it('Create a custom alias that is also a compatible HashId, and make sure the alias works and its blocked as a HashId', function() {
