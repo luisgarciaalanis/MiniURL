@@ -2,7 +2,9 @@
 require('../lib/testUrl');
 const assert = require('assert');
 const chakram = require('chakram');
+const expect = chakram.expect;
 const ApiHelpres = require('./framework/ApiHelpers');
+const muDB = require('../../app/database/muDB');
 
 describe('MiniURL creation without alias:', function() {
     /**
@@ -80,3 +82,23 @@ describe('MiniURL creation with alias:', function() {
     });
 });
 
+muDB.ready().then(() => {
+    describe('Targetted functional logic tests:', function() {
+        it('Create a custom alias that is also a compatible HashId, and make sure the alias works and its blocked as a HashId', function() {
+            /** 1) We find an available HashId */
+            return muDB.miniUrls.findOne({ URL: { $regex: /^-/ }}).then(
+                (doc) => {
+                    return ApiHelpres.TestSuccessfulPostWithAlias('http://www.random.com', doc.alias).then(
+                        () => {
+                            return muDB.miniUrls.findOne({ alias: doc.alias}).then(
+                                (doc) => {
+                                    expect(doc.URL[0]).to.equal('+');
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        });
+    });
+});

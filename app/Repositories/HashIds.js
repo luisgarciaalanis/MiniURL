@@ -5,15 +5,6 @@ const log = require('../libs/logger');
 
 class HashIdsRepository {
     /**
-     * Gets the hash/url for the given id
-     *
-     * @param id
-     */
-    getHashForId(id) {
-        return muDB.miniUrls.findOne({_id: id});
-    }
-
-    /**
      * Seed if empty
      *
      * @returns {*|Promise.<TResult>}
