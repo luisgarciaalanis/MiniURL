@@ -58,7 +58,7 @@ describe('MiniURL creation without alias:', function() {
 
         for (let index = 0 ; index < failingURLs.length; index++) {
             it(`${failingURLs[index][0]} ==> ${failingURLs[index][1]}`, () => {
-                return ApiHelpres.TestFailWithNoAlias(failingURLs[index][2], failingURLs[index][1]);
+                return ApiHelpres.TestFailWithAlias(failingURLs[index][2], failingURLs[index][1]);
             });
         }
     });

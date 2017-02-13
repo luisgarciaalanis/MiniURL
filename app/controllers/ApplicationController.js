@@ -8,6 +8,10 @@ class ApplicationController
         reply.file('./public/index.html');
     }
 
+    getFavicon(request, reply) {
+        reply.file('./public/favicon.ico');
+    }
+
     redirect(request, reply) {
 
         MiniUrlsRepository.getUrl(request.params.hash.trim().toLowerCase()).then(

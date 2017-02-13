@@ -21,8 +21,8 @@ class Routes {
      */
     static InitDirectories() {
         var routes = [];
-        routes.push(Routes.getDirectoryRouteConfig('/css/{path*}',      './public/css'));
-        routes.push(Routes.getDirectoryRouteConfig('/js/{path*}',       './public/js'));
+        routes.push(Routes.getDirectoryRouteConfig('/css/{path*}', './public/css'));
+        routes.push(Routes.getDirectoryRouteConfig('/js/{path*}', './public/js'));
 
         Routes.server.route(routes);
     }
@@ -56,10 +56,11 @@ class Routes {
     static InitStaticRoutes() {
         var routes = [
             /** Application routes **/
-            { method: 'GET',  path: '/',         handler: ApplicationController.getIndexView },
-            { method: 'GET',  path: '/created',  handler: ApplicationController.getIndexView },
-            { method: 'GET',  path: '/about',    handler: ApplicationController.getIndexView },
-            { method: 'GET',  path: '/notfound', handler: ApplicationController.getIndexView },
+            { method: 'GET',  path: '/',            handler: ApplicationController.getIndexView },
+            { method: 'GET',  path: '/created',     handler: ApplicationController.getIndexView },
+            { method: 'GET',  path: '/about',       handler: ApplicationController.getIndexView },
+            { method: 'GET',  path: '/notfound',    handler: ApplicationController.getIndexView },
+            { method: 'GET',  path: '/favicon.ico', handler: ApplicationController.getFavicon   },
         ];
 
         this.server.route(routes);
