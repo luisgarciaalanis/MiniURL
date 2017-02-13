@@ -110,7 +110,7 @@ class HashIdsRepository {
                     intervalId = null;
                     this.setNextIdToGenerate();
                 }
-            }, 200);
+            }, 1000);
         });
     }
 

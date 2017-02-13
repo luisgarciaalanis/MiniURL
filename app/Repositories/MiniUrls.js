@@ -15,15 +15,20 @@ class MiniUrls {
     addUrlWithAlias(stringUrl, alias) {
         /** If the custom alias is a valid hash ID we insert it into the hash Id collection */
         if (HashIds.isValidHash(alias)) {
-            return this.addUrlForHash(stringUrl, alias);
+            return this.addUrlForCustomHash(stringUrl, alias);
         }
 
         /** If if not we insert ir into the custom url collection */
-        return muDB.miniUrlsCustom.findOne({ alias: alias, URL:stringUrl }).then(
+        return muDB.miniUrlsCustom.findOne({ alias: alias }).then(
             (doc) => {
-                /** If we have it already we return it */
+
                 if (doc) {
-                    return doc.alias;
+                    /** If we have it already we don't return it because alias are unique and secret */
+                    if (doc.URL == stringUrl) {
+                        return hashId;
+                    } else {
+                        throw Boom.conflict('Alias already taken, try another one.');
+                    }
                 }
 
                 /**
@@ -40,8 +45,35 @@ class MiniUrls {
         );
     }
 
+    addUrlForCustomHash(stringUrl, hashId) {
+        return muDB.miniUrls.findOne({ alias: hashId }).then(
+            (doc) => {
+                /**
+                 * If we have it already and identical we return it
+                 */
+                if (doc) {
+                    if (doc.URL == stringUrl) {
+                        return hashId;
+                    } else {
+                        throw Boom.conflict('Alias already taken, try another one.');
+                    }
+                }
+                /**
+                 * If we dont have it already, we try to insert it only if the alias is not taken. The insert will fail
+                 * if the ID is taken.
+                 */
+                return muDB.miniUrls.insertOne({ alias: hashId, URL:stringUrl }).then(
+                    (doc) =>  hashId,
+                    (error) => {
+                        throw muDB.errorHandler(error);
+                    }
+                );
+            }
+        );
+    }
+
     addUrlForHash(stringUrl, hashId) {
-        return muDB.miniUrls.findOne({ hash: hashId, URL:stringUrl }).then(
+        return muDB.miniUrls.findOne({ alias: hashId, URL:stringUrl }).then(
             (doc) => {
                 /**
                  * If we have it already and identical we return it
@@ -49,12 +81,11 @@ class MiniUrls {
                 if (doc) {
                     return hashId;
                 }
-
                 /**
                  * If we dont have it already, we try to insert it only if the alias is not taken. The insert will fail
                  * if the ID is taken.
                  */
-                return muDB.miniUrls.insertOne({ hash: hashId, URL:stringUrl }).then(
+                return muDB.miniUrls.insertOne({ alias: hashId, URL:stringUrl }).then(
                     (doc) =>  hashId,
                     (error) => {
                         throw muDB.errorHandler(error);
@@ -118,10 +149,10 @@ class MiniUrls {
     getUrl(alias) {
         /** If its a valid hash look on the miniUrls collection */
         if (HashIds.isValidHash(alias)) {
-            return muDB.miniUrls.findOne({ alias: alias }).then((doc) => doc.URL);
+            return muDB.miniUrls.findOne({ alias: alias }).then(doc => doc.URL);
         }
 
-        return muDB.miniUrlsCustom.findOne({ alias: alias }).then((doc) => doc.URL);;
+        return muDB.miniUrlsCustom.findOne({ alias: alias }).then(doc => doc.URL);
     }
 }
 
