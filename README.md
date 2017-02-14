@@ -21,7 +21,6 @@
 * mocha tests/tests.js
 
 ## Building the docker image and uploading it:
-1. build -t <repository>/<image name>:<tag name> .
+1. build -t &lt;repository&gt;/&lt;image name&gt;:&lt;tag name&gt; .
 2. docker login
-3. docker push <repository>/<image name>:<tag name>
-
+3. docker push &lt;repository&gt;/&lt;image name&gt;:&lt;tag name&gt;
