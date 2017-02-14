@@ -37,7 +37,7 @@ describe('Url parser tests', () => {
 
         for (let index = 0 ; index < passingURLs.length; index++) {
             it(`TEST "${passingURLs[index][0]}" - ${passingURLs[index][1]}`, () => {
-                assert.equal(urlParser.parse(passingURLs[index][1], true), false);
+                assert.equal(urlParser.parse(passingURLs[index][1]), false);
             });
         }
     });
@@ -58,7 +58,7 @@ describe('Url parser tests', () => {
 
         for (let index = 0 ; index < passingURLs.length; index++) {
             it(`TEST "${passingURLs[index][0]}" - ${passingURLs[index][1]}`, () => {
-                assert.equal(urlParser.parse(passingURLs[index][1], true), false);
+                assert.equal(urlParser.parse(passingURLs[index][1]), false);
             });
         }
     });
