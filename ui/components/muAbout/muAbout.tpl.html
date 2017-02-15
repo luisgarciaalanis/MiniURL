@@ -1,1 +1,68 @@
-<h3>About Page</h3>
+<div class="container">
+    <h3>About Page</h3>
+    <hr>
+    <p>This page shortens URLs, provides short aliases for redirection of long URLs as well as custom aliases for such
+        URLs. The code can be found in the <a href="https://github.com/luisgarciaalanis/MiniURL">GitHub page</a>.</p>
+    <br>
+    <h4><strong>Technologies used for the app:</strong></h4>
+    <ol>
+        <li>Node with Hapi.js web framework.</li>
+        <li>MongoDB (the reason for using a NOSQL database was because it's suppose
+            to be lightning fast when used with non relational data and it also works with cloud providers like AZURE
+            and AWS).</li>
+        <li>AngularJS as a single page application.</li>
+        <li>Twitter Bootstrap for styling.</li>
+    </ol>
+    <h4><strong>Technologies used for deployment:</strong></h4>
+    <ol>
+        <li>Docker</li>
+    </ol>
+    <h4><strong>Technologies I use for continuous integration:</strong></h4>
+    <ol>
+        <li>Jenkins</li>
+        <li>Dockerhub repository</li>
+    </ol>
+    <h4><strong>Technologies I use for unit testing:</strong></h4>
+    <ol>
+        <li>Mocha</li>
+        <li>Selenium web driver (Some basic tests and not integrated with Jenkins).</li>
+    </ol>
+    <br>
+    <h4><strong>How it works:</strong></h4>
+    <br>
+    <h5><strong>Data storage:</strong></h5>
+    <p>Data is stored into one of two collections, one for the custom aliased URLs and the other one for the automatic
+        generated URLs. The reason behind this decision was because more than one custom alias could potentially point
+        to the same URL; In order for MongoDB to be speedy while handling millions of entries it needs to have indexes of
+        unique data, so I kept the auto generated aliases on its on data collection, so if more than one person enters a
+        URL it can return the same alias <strong>just like TinyURL.com works</strong>. When submitting a custom alias we
+        never return the same URL if its already there, we don't care we just generate a new entry on the collection.
+    </p>
+    <p>One of the big problems is finding a way to generate the aliases in a unique way. This resulted problematic since
+        I could not find a way to do this without the possibility of alias collisions. This is why the application
+        seeds the database with random generated aliases with no URLs. It then goes and uses them as URLs are entered.
+        The cost of this design is space pre allocated on the database, I think this approach is better than generating
+        random aliases on the fly with the possibility of collissions. The amount of auto generated seeds can be
+        configured. Once the app runs out of them it insets the next batch.
+    </p>
+    <p>
+        For example if the app is configured to generate one million aliases it will generate a list of sequential
+        ordered integers, it will then randomize the list with an N log N algorithm. It will convert each number into
+        a string based on the aliases allowed characters and it will bulk insert it into the database.
+    </p>
+    <p>
+        Bulk inserting into the database is done in chunks of 1000 since its the default standard form mongo bulk
+        operations. Also it does this in a times controlled async wait to avoid blocking the app and allowing the app to
+        keep operating as soon as the first inserts are done. It also tracks how many elements have been inserted into
+        the database so that the next time the app needs to seed it nows from where to start the alias creation.
+    </p>
+    <br>
+    <h5><strong>Aliases:</strong></h5>
+    <p>
+        Aliases are generated from a subset of numbers and letters in lower case, avoiding some that could cause
+        confusion to the user. For example a '0' could be confused with an 'O', and 'l' could be confused with an 'I' or
+        even the number '1' depending on the font being used.
+    </p>
+    <p><strong>Alias valid characters (a modified set of Base32 encoding): </strong>abcdefghijkmnopqrstuvwxyz2345679</p>
+    <br>
+</div>
