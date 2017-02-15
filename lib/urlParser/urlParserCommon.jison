@@ -25,7 +25,6 @@
 '='          return '=';
 '_'          return '_';
 '+'          return '+';
-([0-9])+     return 'NUMBER';
 ([0-9]|[a-z]|[A-Z])+ return 'IDENTIFIER';
 (\%20|\%21|\%23|\%24|\%26|\%27|\%28|\%29|\%2A|\%2B|\%2C|\%2F|\%3A|\%3B|\%3D|\%3F|\%40|\%5B|\%5D)+ return 'PASSWORD_SPECIAL';
 /lex
@@ -62,10 +61,10 @@ baseurl:
     ;
 
 port:
-    ':' NUMBER
-    {
-        if (($2 < 0) || ($2 > 65536)) throw 'port out of bounds'; }
-    ;
+    ':' IDENTIFIER {
+        if (!/^[0-9]+$/.test($2)) throw 'port should only contain integer numbers';
+        if (($2 < 0) || ($2 > 65536)) throw 'port out of bounds';
+    };
 
 hostname:
     IDENTIFIER |

@@ -34,8 +34,7 @@ describe('Url parser tests', () => {
             [ 'URL to image', 'http://image.test/2015/11/promoted-media-optimized_5658eff54962e.jpg' ],
             [ 'Wikipedia page with an apostrophe and a HASH search', 'https://en.wikipedia.org/wiki/Guns_N\'_Roses#International_success_and_band_turmoil_.281990.E2.80.931993.29' ],
             [ 'URL with encoded character %20', 'http://example.com/blue+light%20blue'],
-            [ 'Email', 'mailto:mickey@disney.com'],
-            [ 'Email', 'mailto://donald@disney.com'],
+            [ 'Number as url', '1234']
         ];
 
         for (let index = 0 ; index < passingURLs.length; index++) {
