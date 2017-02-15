@@ -33,9 +33,35 @@ class ShrinkUrlController {
         }
     }
 
+    /**
+     * Verifies that the URL is valid, if its not valid ir replies with failure.
+     *
+     * @param url
+     * @param reply
+     * @returns {boolean}
+     * @constructor
+     */
     static VerifyUrlOrFail(url, reply) {
         if (!url) {
             reply(Boom.badRequest('Missing URL'));
+            return false;
+        }
+
+        /** HACK: need a better way to handle this and any other fake DNS mimick, also protect against all the
+         * ip addresses of the host, docker container including Ipv4 and Ipv6.
+         * This hack is for demo purposes.
+         * 1) get IPs of docker container.
+         * 2) get IPs of host machine
+         * 3) get hostname of URL being shrinked and run it against a DNS service.
+         * 4) Make sure the ip does not match any of our IPs or fail otherwise. **/
+        if (url.startsWith('http://m.garcia.tv') || url.startsWith('m.garcia.tv') ||
+            url.startsWith('http://13.91.40.170') || url.startsWith('13.91.40.170')) {
+            reply(Boom.forbidden('Nice try!!! you script kiddie!'));
+            return false;
+        }
+
+        if (url.startsWith('javascript:')) {
+            reply(Boom.forbidden('javascript is not allowed!'));
             return false;
         }
 
@@ -57,6 +83,14 @@ class ShrinkUrlController {
         return true;
     }
 
+    /**
+     * Verifies that the alias is valid or it replies with failure
+     * 
+     * @param alias
+     * @param reply
+     * @returns {boolean}
+     * @constructor
+     */
     static VerifyAliasOrFail(alias, reply) {
         let forbiddenAliases = [ 'api', 'css', 'js', 'created', 'about', 'notfound', 'favicon.ico' ];
         if (alias.length > 0) {

@@ -4,18 +4,24 @@
     <p>This page shortens URLs, provides short aliases for redirection of long URLs as well as custom aliases for such
         URLs. The code can be found in the <a href="https://github.com/luisgarciaalanis/MiniURL">GitHub page</a>.</p>
     <br>
-    <h4><strong>Technologies used for the app:</strong></h4>
+    <h4><strong>Technologies used for the app backend:</strong></h4>
     <ol>
         <li>Node with Hapi.js web framework.</li>
         <li>MongoDB (the reason for using a NOSQL database was because it's suppose
             to be lightning fast when used with non relational data and it also works with cloud providers like AZURE
             and AWS).</li>
+        <li>App written in Ecmascript 6 (ES6 - Javascript 2015) except a few files shared with the frontend.</li>
+    </ol>
+    <h4><strong>Technologies used for the app frontend:</strong></h4>
+    <ol>
         <li>AngularJS as a single page application.</li>
+        <li>Angular ui router</li>
         <li>Twitter Bootstrap for styling.</li>
+        <li>App written in vanilla ES5 javascript.</li>
     </ol>
     <h4><strong>Technologies used for deployment:</strong></h4>
     <ol>
-        <li>Docker</li>
+        <li>Docker for easy deployment to production.</li>
     </ol>
     <h4><strong>Technologies I use for continuous integration:</strong></h4>
     <ol>
@@ -65,4 +71,12 @@
     </p>
     <p><strong>Alias valid characters (a modified set of Base32 encoding): </strong>abcdefghijkmnopqrstuvwxyz2345679</p>
     <br>
+    <h4><strong>Wish list/ missing:</strong></h4>
+    <ol>
+        <li>More work on the parser to be smarter and more <a href="https://tools.ietf.org/html/rfc3986">rfc3986</a>
+        compliant. Including IpV6 native Addresses....</li>
+        <li>More work on the parser to return an object instead of true, the object containing the parts of the URL.
+        The idea is to be more robust to prevent self injection circular denial of service attack.</li>
+        <li>More tests, and more UI tests.</li>
+    </ol>
 </div>
