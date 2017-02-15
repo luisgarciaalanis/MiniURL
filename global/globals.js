@@ -9,7 +9,7 @@
 
 var config = {
     hashIds: {
-        createAtOnce: 10000,
+        createAtOnce: 1000000,
         regExp: /^[a-km-z2-79]+$/,
         base32Lookup: 'abcdefghijkmnopqrstuvwxyz2345679'
     },
