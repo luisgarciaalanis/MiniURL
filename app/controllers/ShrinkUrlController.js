@@ -1,6 +1,5 @@
 const urlParser = require('../../lib/urlParser/urlParser');
 const MiniUrlRepository = require('../Repositories/MiniUrls');
-const hashIdsConstants = require('../../global/globals').hashIds;
 const customIdsConstants = require('../../global/globals').customAlias;
 const Boom = require('boom');
 
@@ -85,7 +84,7 @@ class ShrinkUrlController {
 
     /**
      * Verifies that the alias is valid or it replies with failure
-     * 
+     *
      * @param alias
      * @param reply
      * @returns {boolean}

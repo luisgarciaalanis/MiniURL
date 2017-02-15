@@ -15,7 +15,6 @@ function muCreateComponent(ShrinkUrlService, $state) {
     this.alert = null;
     this.host = window.location.host;
     this.urlMaxSize = defaults.urlMaxSize;
-    this.aliasMaxSize = defaults.customAlias.maxSize;
     ShrinkUrlService.clear();
 
     /**
@@ -56,12 +55,8 @@ function muCreateComponent(ShrinkUrlService, $state) {
         var result = false;
         this.customAlias = this.customAlias.trim();
 
-        if (this.customAlias.length == 0) {
+        if (this.customAlias.length == 0 || defaults.customAlias.regExp.test(this.customAlias)) {
             result = true;
-        } else if ((this.customAlias.indexOf(' ') < 0) && defaults.customAlias.regExp.test(this.customAlias)) {
-            if (this.customAlias[0] != '-' && this.customAlias[this.customAlias.length -1] != '-') {
-                result = true
-            }
         }
 
         if (!result) {
@@ -104,7 +99,7 @@ function muCreateComponent(ShrinkUrlService, $state) {
     /**
      * Closes an alert being displayed
      */
-    this.closeAlert = function () {
+    this.closeAlert = function() {
         this.alert = null;
     };
 }

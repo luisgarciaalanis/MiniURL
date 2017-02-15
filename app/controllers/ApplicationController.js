@@ -1,5 +1,4 @@
 'use strict';
-const ShrinkUrlStore = null;//require('./ShrinkUrlStore.Memory');
 const MiniUrlsRepository = require('../Repositories/MiniUrls');
 
 class ApplicationController

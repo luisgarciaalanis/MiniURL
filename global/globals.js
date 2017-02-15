@@ -15,7 +15,7 @@ var config = {
     },
     customAlias: {
         maxSize: 20,
-        regExp: /^[a-zA-Z0-9\-]+$/
+        regExp: /^[a-zA-Z0-9]+[a-zA-Z0-9\-]*[a-zA-Z0-9]+$/
     },
     urlMaxSize: 2000
 };
