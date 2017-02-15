@@ -83,16 +83,18 @@ function muCreateComponent(ShrinkUrlService, $state) {
                 function (error) {
                     switch (error.status) {
                         case 500:
-                            this.alert = {type: 'danger', msg: 'Failed to shrink the URL.'};
+                            this.alert = { type: 'danger', msg: 'Failed to shrink the URL.'};
                             break;
+                        case 403:
+                            this.alert = { type: 'danger', msg: error.data.message };
                         case 409:
-                            this.alert = {type: 'danger', msg: error.data.message};
+                            this.alert = { type: 'danger', msg: error.data.message };
                             break;
                         case 503:
-                            this.alert = {type: 'danger', msg: 'MiniUrl service is not available. Try again at a later time. '};
+                            this.alert = { type: 'danger', msg: 'MiniUrl service is not available. Try again at a later time.' };
                             break;
                         default:
-                            this.alert = {type: 'danger', msg: 'Unexpected Error'};
+                            this.alert = { type: 'danger', msg: 'Unexpected Error' };
                     }
                 }.bind(this)
             );
