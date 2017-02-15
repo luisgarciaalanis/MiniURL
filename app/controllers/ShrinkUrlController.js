@@ -4,10 +4,18 @@ const customIdsConstants = require('../../global/globals').customAlias;
 const Boom = require('boom');
 
 class ShrinkUrlController {
+    /**
+     * Shrinks the URL with ot without alias
+     *
+     * @param request
+     * @param reply
+     * @constructor
+     */
     static Shrink(request, reply) {
         let url = request.payload.url ? request.payload.url.trim() : '';
         let alias = request.payload.alias ? request.payload.alias.trim().toLowerCase() : '';
 
+        /** Verifies the URL is good */
         if (ShrinkUrlController.VerifyUrlOrFail(url, reply)) {
 
             if (!alias) {
@@ -19,6 +27,7 @@ class ShrinkUrlController {
                         reply(error);
                     }
                 );
+                /** Verifies the alias is good */
             } else if (ShrinkUrlController.VerifyAliasOrFail(alias, reply)) {
                 MiniUrlRepository.addUrlWithAlias(url, alias).then(
                     (alias) => {
