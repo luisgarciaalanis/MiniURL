@@ -47,7 +47,7 @@ class HashIdsRepository {
     insertRandomIntIds(randomInts) {
         return new Promise((resolve, reject) => {
             let insertSoFar = 0;
-            const insertAtOnce = 1000;
+            const insertAtOnce = hashIds.insertAtOnce;
 
             log.info('insertRandomIntIds - About to insert newly generated ID\'s!');
 
@@ -101,7 +101,7 @@ class HashIdsRepository {
                     intervalId = null;
                     this.setNextIdToGenerate();
                 }
-            }, 1000);
+            }, hashIds.msBetweenBulks);
         });
     }
 

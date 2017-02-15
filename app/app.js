@@ -7,15 +7,10 @@ let muDb = require('./database/muDB');
 const HashIds = require('./Repositories/HashIds');
 const log = require('./libs/logger');
 
-
-/**
- * Creates the server connection
- */
+/** Creates the server connection */
 server.connection({ port: 3000 });
 
-/**
- * Registers the plugin to handle static files and directories
- */
+/** Registers the plugin to handle static files and directories */
 server.register(Inert, (err) => {
     if (err) {
         console.error('Failed to load plugin:', err);
@@ -23,6 +18,7 @@ server.register(Inert, (err) => {
     }
 });
 
+/** Initializes the routes */
 Routes.Init(server);
 
 muDb.ready().then(
