@@ -62,6 +62,13 @@ class MuDB {
     }
 
     /**
+     * Disconnects the database
+     */
+    disconnect() {
+        this[privates].db.close();
+    }
+
+    /**
      * Connects to the database
      */
     conncet() {
@@ -97,17 +104,6 @@ class MuDB {
              * Resolves the promise.
              */
             this[privates].resolve();
-        });
-    }
-
-    /**
-     * Clears all URLS from the database
-     *
-     * @returns {*|Promise.<TResult>}
-     */
-    clearAllCollections() {
-        return this.miniUrls.updateMany({ URL: {$ne:'' }}, { $set:{ URL:'' }}).then(() => {
-            return this.miniUrlsCustom.deleteMany({});
         });
     }
 }
