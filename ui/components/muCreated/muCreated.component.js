@@ -7,9 +7,6 @@ function muCreatedComponent(ShrinkUrlService, $state) {
     } else {
         $state.go('Create');
     }
-
-    //this.shrinkedUrlLength = ShrinkUrlService.shrinkResult;
-
 }
 
 muCreatedComponent.$inject = [ 'ShrinkUrlService', '$state' ];

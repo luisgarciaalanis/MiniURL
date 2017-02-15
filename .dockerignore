@@ -1,3 +1,5 @@
 node_modules
 tests
 logs
+public/js/app/js/MiniUrl.map
+public/js/app/angular-ui-router.map

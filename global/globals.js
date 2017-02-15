@@ -7,7 +7,7 @@
  * But I removed the l and added the 9 for more human readability
  */
 
-let config = {
+var config = {
     hashIds: {
         createAtOnce: 10000,
         regExp: /^[a-km-z2-79]+$/,
