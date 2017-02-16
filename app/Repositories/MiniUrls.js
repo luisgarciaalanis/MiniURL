@@ -25,30 +25,56 @@ class MiniUrls {
                     }
                 }
 
-                /**
-                 * If we dont have it already, we try to insert it only if the alias is not taken. For miniUrls
-                 * the alias is a unique indexed field so it should fail if its already in use.
-                 */
-                return muDB.miniUrlsCustom.insertOne({ alias: alias,  URL: stringUrl }).then(
-                    (doc) => {
-                        /**
-                         * If the alias is a hashId compatible id we need to block it from the miniUrls DB since its
-                         * now a custom one and we don't want that id to ever be used. So we updateOne with upsert: true
-                         */
-                        if (HashIds.isValidHash(alias)) {
-                            muDB.miniUrls.updateOne({ alias: alias }, { $set: { URL: `+${alias}` }}, { upsert: true, returnNewDocument:true }).then(
-                                (doc) => {
-                                    return alias;
+                /** If did not find a custom one we first need to verify its not in use as a regular alias */
+                if (HashIds.isValidHash(alias)) {
+                    return muDB.miniUrls.findOne({alias: alias}).then(
+                        (doc) => {
+                            if (doc) {
+                                /** If we find one and its in use we can't use the alias */
+                                if (!doc.alias.startsWith('-')) {
+                                    throw Boom.conflict('Alias already taken, try another one.');
                                 }
-                            );
-                        } else {
+                            }
+                            /** Since its a regular alias and its either not found or not in use we can safetly insert
+                             * it. */
+                            return this.insertUrlWithAlias(stringUrl, alias);
+                        }
+                    );
+                } else {
+                    /** since it's not a regular alias we can safely insert it */
+                    return this.insertUrlWithAlias(stringUrl, alias);
+                }
+            }
+        );
+    }
+
+    /**
+     * If we dont have it already, we try to insert it only if the alias is not taken. For miniUrls
+     * the alias is a unique indexed field so it should fail if its already in use.
+     *
+     * @param stringUrl
+     * @param alias
+     * @returns {*|Promise.<TResult>}
+     */
+    insertUrlWithAlias(stringUrl, alias) {
+        return muDB.miniUrlsCustom.insertOne({ alias: alias,  URL: stringUrl }).then(
+            (doc) => {
+                /**
+                 * If the alias is a hashId compatible id we need to block it from the miniUrls DB since its
+                 * now a custom one and we don't want that id to ever be used. So we updateOne with upsert: true
+                 */
+                if (HashIds.isValidHash(alias)) {
+                    muDB.miniUrls.updateOne({ URL: { $regex: /^-/ }}, { $set: { URL: `+${alias}` }}, { upsert: true, returnNewDocument:true }).then(
+                        (doc) => {
                             return alias;
                         }
-                    },
-                    (error) => {
-                        throw muDB.errorHandler(error);
-                    }
-                );
+                    );
+                } else {
+                    return alias;
+                }
+            },
+            (error) => {
+                throw muDB.errorHandler(error);
             }
         );
     }
