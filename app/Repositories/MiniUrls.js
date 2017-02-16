@@ -31,7 +31,7 @@ class MiniUrls {
                         (doc) => {
                             if (doc) {
                                 /** If we find one and its in use we can't use the alias */
-                                if (!doc.alias.startsWith('-')) {
+                                if (!doc.URL.startsWith('-')) {
                                     throw Boom.conflict('Alias already taken, try another one.');
                                 }
                             }
