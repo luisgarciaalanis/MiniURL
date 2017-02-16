@@ -88,14 +88,15 @@ describe('Targetted tests', function() {
      */
         describe('functional logic tests:', function() {
             it('Create a custom alias that is also a compatible HashId, and make sure the alias works and its blocked as a HashId', function() {
-                /** 1) We find an available HashId */
                 return muDB.ready().then(() => {
+                    /** 1) We find an available HashId */
                     return muDB.miniUrls.findOne({ URL: { $regex: /^-/ }}).then(
                         (doc) => {
-                            console.log(doc);
                             expect(typeof doc.alias).not.to.equal('undefined');
+                            /** 2) Test we can insert the hashId as a custom id */
                             return ApiHelpres.TestSuccessfulPostWithAlias('http://www.random.com', doc.alias).then(
                                 () => {
+                                    /** We make sure the HashId is not blocked */
                                     return muDB.miniUrls.findOne({ alias: doc.alias}).then(
                                         (doc) => {
                                             expect(doc.URL[0]).to.equal('+');
