@@ -12,7 +12,7 @@
 <<EOF>>      return 'EOF';
 (\#[^ ]+)    return 'HASHEND'; /* Might need to investigate to make it more roboust */
 
-(\/(([0-9]|[a-z]|[A-Z]|\+|_|\-|\'|\.|\(|\)|\%20)+\/?)*)            return 'URLPATH';
+(\/(([0-9]|[a-z]|[A-Z]|\+|_|\-|\'|\.|\(|\)|\%20|\%27)+\/?)*)            return 'URLPATH';
 
 ([0-9]|[a-z]|[A-Z]|_)+\=([0-9]|[a-z]|[A-Z]|_|\+|\%20|\-|\.)+ return 'KEYVALUEPAIR';
 '-'          return '-';

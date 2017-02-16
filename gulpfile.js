@@ -42,3 +42,5 @@ gulp.task('watch', () => {
     ];
     gulp.watch(pathsToWatch, [ 'build-ui' ]);
 });
+
+gulp.task('default', [ 'compile-url-parser', 'build-ui' ]);
