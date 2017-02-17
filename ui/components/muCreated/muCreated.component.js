@@ -1,7 +1,8 @@
+/*global window */
 'use strict';
 
 function muCreatedComponent(ShrinkUrlService, $state) {
-    if(ShrinkUrlService.shrinkResult) {
+    if (ShrinkUrlService.shrinkResult) {
         this.miniUrl = 'http://' + window.location.host + '/' + ShrinkUrlService.shrinkResult.alias;
         this.url = ShrinkUrlService.shrinkResult.url;
     } else {
@@ -17,9 +18,9 @@ muCreatedComponent.$inject = [ 'ShrinkUrlService', '$state' ];
  * @param app
  * @constructor
  */
-module.exports.Init = function(app) {
+module.exports.Init = function (app) {
     app.component('muCreated', {
         template: require('./muCreated.tpl.html'),
         controller: muCreatedComponent
     });
-}
+};

@@ -6,10 +6,9 @@
  * @param app
  * @constructor
  */
-module.exports.Init = function(app) {
+module.exports.Init = function (app) {
     app.component('muAppFrame', {
         template: require('./muAppFrame.tpl.html'),
-        transclude: true,
-        controller: function() {}
+        transclude: true
     });
-}
+};

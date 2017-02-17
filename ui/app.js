@@ -1,4 +1,4 @@
-'use strict';
+'use strict';/*global angular*/
 var routes = require('./routes');
 var muAppFrame = require('./components/muAppFrame/muAppFrame.component');
 var muCreate = require('./components/muCreate/muCreate.component');
@@ -8,7 +8,7 @@ var muNotFound = require('./components/muNotFound/muNotFound.component');
 var shrinkUrlService = require('./services/ShrinkUrlService');
 var responseErrorInterceptor = require('./interceptors/responseError');
 
-var muApp = angular.module('shrinkUrl', [ 'ui.router', 'ui.bootstrap' ] );
+var muApp = angular.module('shrinkUrl', [ 'ui.router', 'ui.bootstrap' ]);
 
 /**
  * Initializing routes

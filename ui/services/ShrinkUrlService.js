@@ -47,6 +47,6 @@ ShrinkUrlService.$inject = [ '$http' ];
  * @param app
  * @constructor
  */
-module.exports.Init = function(app) {
+module.exports.Init = function (app) {
     app.service('ShrinkUrlService', ShrinkUrlService);
 };

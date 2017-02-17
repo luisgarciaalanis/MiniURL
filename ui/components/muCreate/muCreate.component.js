@@ -1,4 +1,7 @@
+/*global window */
+/*jslint white: true */
 'use strict';
+
 var urlParser = require('../../../lib/urlParser/urlParser');
 var defaults = require('../../../global/globals');
 
@@ -23,10 +26,13 @@ function muCreateComponent(ShrinkUrlService, $state) {
      * @returns {boolean}
      */
     this.verifyUrlIsValid = function () {
-        var result = false;
+        var result = false,
+            urlLower = null;
+
         this.url = this.url.trim();
+
         if (urlParser.parse(this.url)) {
-            var urlLower = this.url.toLowerCase();
+            urlLower = this.url.toLowerCase();
             if (!urlLower.startsWith('http://') && !urlLower.startsWith('https://') && !urlLower.startsWith('mailto:')) {
                 this.url = 'http://' + this.url;
             }
@@ -51,11 +57,11 @@ function muCreateComponent(ShrinkUrlService, $state) {
      * Verifies if the custom alias is valid
      * @returns {boolean}
      */
-    this.verifyCustomAliastIsValid = function() {
+    this.verifyCustomAliastIsValid = function () {
         var result = false;
         this.customAlias = this.customAlias.trim();
 
-        if (this.customAlias.length == 0 || defaults.customAlias.regExp.test(this.customAlias)) {
+        if (this.customAlias.length === 0 || defaults.customAlias.regExp.test(this.customAlias)) {
             result = true;
         }
 
@@ -69,7 +75,7 @@ function muCreateComponent(ShrinkUrlService, $state) {
     /**
      * Submits a URL to be shrinked
      */
-    this.submitUrl = function() {
+    this.submitUrl = function () {
         if (this.verifyUrlIsValid() && this.verifyCustomAliastIsValid()) {
             ShrinkUrlService.shrink(this.url, this.customAlias).then(
                 function () {
@@ -82,6 +88,7 @@ function muCreateComponent(ShrinkUrlService, $state) {
                             break;
                         case 403:
                             this.alert = { type: 'danger', msg: error.data.message };
+                            break;
                         case 409:
                             this.alert = { type: 'danger', msg: error.data.message };
                             break;
@@ -99,7 +106,7 @@ function muCreateComponent(ShrinkUrlService, $state) {
     /**
      * Closes an alert being displayed
      */
-    this.closeAlert = function() {
+    this.closeAlert = function () {
         this.alert = null;
     };
 }
@@ -112,9 +119,9 @@ muCreateComponent.$inject = [ 'ShrinkUrlService', '$state' ];
  * @param app
  * @constructor
  */
-module.exports.Init = function(app) {
+module.exports.Init = function (app) {
     app.component('muCreate', {
         template: require('./muCreate.tpl.html'),
         controller: muCreateComponent
     });
-}
+};

@@ -6,10 +6,9 @@
  * @param app
  * @constructor
  */
-module.exports.Init = function(app) {
+module.exports.Init = function (app) {
     app.component('muNotFound', {
         template: require('./muNotFound.tpl.html'),
-        transclude: true,
-        controller: function () {}
+        transclude: true
     });
-}
+};
