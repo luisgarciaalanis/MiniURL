@@ -18,7 +18,7 @@ class MuDB {
      */
     constructor() {
         /**
-         * This is done to hide these members from the outter modules.
+         * This is done to hide these members from the outer modules.
          */
         this[privates] = {
             reject: null,
@@ -85,13 +85,28 @@ class MuDB {
              * Creates or opens the collections needed
              */
             this.miniUrls = this[privates].db.collection(dbConfig.miniUrlsCollectionName);
+            this.miniUrls.createIndex({ index: 1 }, { unique: true });
             this.miniUrls.createIndex({ alias: 1 }, { unique: true });
             this.miniUrls.createIndex({ URL: 1 }, { unique: true });
             this.miniUrlsCustom = this[privates].db.collection(dbConfig.miniUrlsCustomCollectionName);
             this.miniUrlsCustom.createIndex({ alias: 1 }, { unique: true })
-            this.hashIdInfo = this[privates].db.collection(dbConfig.hashIdInfoCollectionName);
-            /** The following line will fail if nextIdToGenerate exists */
-            this.hashIdInfo.insertOne({ _id: 'nextIdToGenerate', nextIdToGenerate: 0}).catch(() => {});
+            this[privates].db.collection(dbConfig.hashIdInfoCollectionName, {}, (err, col) => {
+                /** The following line will fail if nextIdToGenerate exists */
+                col.insertOne({ _id: 'nextIdToGenerate', nextIdToGenerate: 0, currentIndex: -1 }).then(
+                    () => {
+                        /**
+                         * Resolves the promise.
+                         */
+                        this[privates].resolve();
+                    }
+                ).catch(() => {
+                    /**
+                     * Resolves the promise.
+                     */
+                    this[privates].resolve();
+                });
+                this.hashIdInfo = col;
+            });
 
             /**
              * Just an event to log incase of an error
@@ -100,10 +115,6 @@ class MuDB {
                 log.error(error);
             });
 
-            /**
-             * Resolves the promise.
-             */
-            this[privates].resolve();
         });
     }
 }

@@ -3,6 +3,7 @@ const muDB = require('../database/muDB');
 const log = require('../libs/logger');
 const HashIds = require('./HashIds');
 const Boom = require('boom');
+const HashIdsInfo = require('./HashIdsInfo');
 
 class MiniUrls {
     /**
@@ -49,7 +50,7 @@ class MiniUrls {
     }
 
     /**
-     * If we dont have it already, we try to insert it only if the alias is not taken. For miniUrls
+     * If we don't have it already, we try to insert it only if the alias is not taken. For miniUrls
      * the alias is a unique indexed field so it should fail if its already in use.
      *
      * @param stringUrl
@@ -85,7 +86,27 @@ class MiniUrls {
      * @param stringUrl
      * @returns {*}
      */
-    addUrl(stringUrl) {
+    async addUrl(stringUrl) {
+        let doc = await muDB.miniUrls.findOne({ URL: stringUrl });
+
+        if (doc) {
+            return doc.alias;
+        }
+
+        let index = await HashIdsInfo.getNextIndex();
+
+        doc = await muDB.miniUrls.findOneAndUpdate({ index: index }, {$set: { URL: stringUrl }});
+
+        return doc.value.alias;
+    }
+
+    /**
+     * Adds a url without an alias
+     *
+     * @param stringUrl
+     * @returns {*}
+     */
+    addUrlOld(stringUrl) {
         /** First we try to find it */
         return muDB.miniUrls.findOne({ URL: stringUrl }).then(
             (doc) => {

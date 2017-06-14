@@ -17,7 +17,7 @@
     "gutil": "^1.6.4",
     "hapi": "^16.1.0",
     "inert": "^4.1.0",
-    "mongodb": "^2.2.22",
+    "mongodb": "^2.2.28",
     "simple-node-logger": "^0.93.14"
   },
   "devDependencies": {

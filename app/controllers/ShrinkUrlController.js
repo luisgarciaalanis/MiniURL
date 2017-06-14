@@ -24,6 +24,7 @@ class ShrinkUrlController {
                         reply( { alias:hash });
                     },
                     (error) => {
+                        console.log(error);
                         reply(error);
                     }
                 );

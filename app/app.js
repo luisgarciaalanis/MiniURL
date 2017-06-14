@@ -3,8 +3,9 @@ const Hapi = require('hapi');
 const Inert = require('inert');
 const server = new Hapi.Server();
 const Routes = require('./routes');
-let muDb = require('./database/muDB');
+const muDB = require('./database/muDB');
 const HashIds = require('./Repositories/HashIds');
+const HashIdsInfo = require('./Repositories/HashIdsInfo');
 const log = require('./libs/logger');
 
 /** Creates the server connection */
@@ -21,18 +22,22 @@ server.register(Inert, (err) => {
 /** Initializes the routes */
 Routes.Init(server);
 
-muDb.ready().then(
+muDB.ready().then(
     () => {
-        HashIds.seedIfEmpty().then(
+        HashIdsInfo.ready().then(
             () => {
-                server.start((err) => {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log('Server running at:', server.info.uri);
-                });
+                HashIds.seedIfEmpty().then(
+                    () => {
+                        server.start((err) => {
+                            if (err) {
+                                throw err;
+                            }
+                            console.log('Server running at:', server.info.uri);
+                        });
 
-                log.info('Database is ready!');
+                        log.info('Database is ready!');
+                    }
+                );
             }
         );
     },

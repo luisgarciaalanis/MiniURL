@@ -1,5 +1,5 @@
 'use strict';
-let muDB = require('../database/muDB');
+const muDB = require('../database/muDB');
 const hashIds = require('../../global/globals').hashIds;
 const log = require('../libs/logger');
 
@@ -45,8 +45,9 @@ class HashIdsRepository {
      * @returns {Promise}
      */
     insertRandomIntIds(randomInts) {
-        return new Promise((resolve, reject) => {
-            let insertSoFar = 0;
+        return new Promise((resolve) => {
+            let insertedSoFar = 0;
+            let resolved = false;
             const insertAtOnce = hashIds.insertAtOnce;
 
             log.info('insertRandomIntIds - About to insert newly generated ID\'s!');
@@ -56,17 +57,18 @@ class HashIdsRepository {
              */
             let intervalId = setInterval(() => {
                 let bulk = muDB.miniUrls.initializeUnorderedBulkOp();
-                let insertUntil = (insertSoFar + insertAtOnce) < hashIds.createAtOnce ? insertSoFar + insertAtOnce : hashIds.createAtOnce;
+                let insertUntil = (insertedSoFar + insertAtOnce) < hashIds.createAtOnce ? insertedSoFar + insertAtOnce : hashIds.createAtOnce;
 
                 /**
                  * For performance gains by indexing URL with unique == true, we need to put unique values that are not
                  * URL so that we do find and updates based on strings begining with -. This change made a HUGE performance
                  * on the insertion of data. From seconds to less than 10 ms when dealing with millions of documents.
                  */
-                for (insertSoFar ; insertSoFar < insertUntil ; insertSoFar++) {
-                    let alias = this.intToBase32(randomInts[insertSoFar]);
+                for ( ; insertedSoFar < insertUntil ; insertedSoFar++) {
+                    let alias = this.intToBase32(randomInts[insertedSoFar]);
                     bulk.insert({
                         alias: alias,
+                        index: insertedSoFar,
                         URL: `-${alias}`
                     });
                 }
@@ -77,7 +79,8 @@ class HashIdsRepository {
                          *  once the first batch of ids becomes available we can resolve to avoid having to wait for one
                          *  million insets.
                          */
-                        if (insertSoFar >= insertAtOnce) {
+                        if (!resolved) {
+                            resolved = true;
                             resolve();
                         }
                     },
@@ -95,7 +98,7 @@ class HashIdsRepository {
                     }
                 );
 
-                if (insertSoFar == hashIds.createAtOnce) {
+                if (insertedSoFar == hashIds.createAtOnce) {
                     log.info('insertRandomIntIds - Finished inserting newly generated ID\'s!');
                     clearInterval(intervalId);
                     intervalId = null;
@@ -103,6 +106,32 @@ class HashIdsRepository {
                 }
             }, hashIds.msBetweenBulks);
         });
+    }
+
+    /**
+     * Updates the number of the next value that needs to be generated on the database
+     *
+     * @returns {Promise.<TResult>}
+     */
+    async setNextIdToGenerate() {
+        return muDB.hashIdInfo.findOneAndUpdate({ _id: 'nextIdToGenerate'}, { $inc: { 'nextIdToGenerate': hashIdsConstants.createAtOnce }}).then(
+            () => {
+                return true;
+            }
+        );
+    }
+
+    /**
+     * Updates the number of the next value that needs to be generated on the database
+     *
+     * @returns {Promise.<TResult>}
+     */
+    async setNextIdToGenerate() {
+        return muDB.hashIdInfo.findOneAndUpdate({ _id: 'nextIdToGenerate'}, { $inc: { 'nextIdToGenerate': hashIdsConstants.createAtOnce }}).then(
+            () => {
+                return true;
+            }
+        );
     }
 
     /**
@@ -119,24 +148,11 @@ class HashIdsRepository {
     }
 
     /**
-     * Updates the number of the next value that needs to be generated on the database
-     *
-     * @returns {Promise.<TResult>}
-     */
-    setNextIdToGenerate() {
-        return muDB.hashIdInfo.findOneAndUpdate({ _id: 'nextIdToGenerate'}, { $inc: { 'nextIdToGenerate': hashIds.createAtOnce }}).then(
-            () => {
-                return true;
-            }
-        );
-    }
-
-    /**
      * Generate random Id's based on hashIds.createAtOnce constant, defaulted to one million, then scrambles them.
      *
      * @returns {Promise}
      */
-    generateRandomIntIds() {
+    async generateRandomIntIds() {
         return this.getNextIdToGenerate().then(
             (nextIdToGenerate) => {
                 let timeStart = Date.now();
