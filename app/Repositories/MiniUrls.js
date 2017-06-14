@@ -57,27 +57,24 @@ class MiniUrls {
      * @param alias
      * @returns {*|Promise.<TResult>}
      */
-    insertUrlWithAlias(stringUrl, alias) {
-        return muDB.miniUrlsCustom.insertOne({ alias: alias,  URL: stringUrl }).then(
-            (doc) => {
-                /**
-                 * If the alias is a hashId compatible id we need to block it from the miniUrls DB since its
-                 * now a custom one and we don't want that id to ever be used. So we updateOne with upsert: true
-                 */
-                if (HashIds.isValidHash(alias)) {
-                    muDB.miniUrls.updateOne({ URL: { $regex: /^-/ }}, { $set: { URL: `+${alias}` }}, { upsert: true, returnNewDocument:true }).then(
-                        (doc) => {
-                            return alias;
-                        }
-                    );
-                } else {
-                    return alias;
-                }
-            },
-            (error) => {
-                throw muDB.errorHandler(error);
+    async insertUrlWithAlias(stringUrl, alias) {
+        try {
+            await muDB.miniUrlsCustom.insertOne({ alias: alias,  URL: stringUrl });
+            /**
+             * If the alias is a hashId compatible id we need to block it from the miniUrls DB since its
+             * now a custom one and we don't want that id to ever be used. So we updateOne with upsert: true
+             */
+            if (HashIds.isValidHash(alias)) {
+                let doc = await muDB.miniUrls.updateOne({ alias: alias }, { $set: { URL: `+${alias}` }}, { upsert: true, returnNewDocument: true });
+
+                return alias;
+            } else {
+                return alias;
             }
-        );
+
+        } catch (err) {
+            throw muDB.errorHandler(err);
+        }
     }
 
     /**
@@ -95,54 +92,20 @@ class MiniUrls {
 
         let index = await HashIdsInfo.getNextIndex();
 
+        doc = await muDB.miniUrls.findOne({ index: index });
+        let customDoc = await muDB.miniUrlsCustom.findOne({ alias: doc.alias });
+
+        /**
+         * If we have a custom URL with that alias we get another one
+         */
+        if (customDoc) {
+            index = await HashIdsInfo.getNextIndex();
+        }
+
         doc = await muDB.miniUrls.findOneAndUpdate({ index: index }, {$set: { URL: stringUrl }});
 
+
         return doc.value.alias;
-    }
-
-    /**
-     * Adds a url without an alias
-     *
-     * @param stringUrl
-     * @returns {*}
-     */
-    addUrlOld(stringUrl) {
-        /** First we try to find it */
-        return muDB.miniUrls.findOne({ URL: stringUrl }).then(
-            (doc) => {
-                /** if we do we return the alias, since we already have it on the DB */
-                if (doc) {
-                    return doc.alias;
-                }
-
-                /** This atomic operation should avoid possible race conditions */
-                return muDB.miniUrls.findOneAndUpdate({ URL: { $regex: /^-/ }}, {$set: { URL: stringUrl }}).then(
-                    (doc) => {
-                        /** if we did not find any we need to generate more hashIds and then insert again. */
-                        if (!doc.value) {
-                            return HashIds.generateRandomIntIds().then(
-                                () => {
-                                    return muDB.miniUrls.findOneAndUpdate({ URL: { $regex: /^-/ }}, {$set: { URL: stringUrl }}).then(
-                                        (doc) => {
-                                            return doc.value.alias;
-                                        }
-                                    );
-                                }
-                            );
-                        }
-
-                        return doc.value.alias;
-                    },
-                    (error) => {
-                        throw muDB.errorHandler(error);
-                    }
-                );
-            }
-        ).catch(
-            (error) => {
-                throw muDB.errorHandler(error);
-            }
-        );;
     }
 
     /**

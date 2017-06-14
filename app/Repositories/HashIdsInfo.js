@@ -46,13 +46,12 @@ class HashIdsInfo {
      */
     async getNextIndex() {
         this.currentIndex++;
+        await muDB.hashIdInfo.findOneAndUpdate({ _id: 'nextIdToGenerate'}, { $set: { currentIndex: this.currentIndex }});
 
         if (this.currentIndex == this.nextIdToGenerate) {
             console.log(HashIds.generateRandomIntIds);
             await HashIds.generateRandomIntIds();
         }
-
-        muDB.hashIdInfo.findOneAndUpdate({ _id: 'nextIdToGenerate'}, { index: this.currentIndex });
 
         return this.currentIndex;
     }

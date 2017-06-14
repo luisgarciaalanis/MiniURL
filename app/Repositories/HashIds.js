@@ -1,6 +1,6 @@
 'use strict';
 const muDB = require('../database/muDB');
-const hashIds = require('../../global/globals').hashIds;
+const hashIdsConstants = require('../../global/globals').hashIds;
 const log = require('../libs/logger');
 
 class HashIdsRepository {
@@ -10,32 +10,22 @@ class HashIdsRepository {
      * @returns {*|Promise.<TResult>}
      * @constructor
      */
-    seedIfEmpty() {
-        return muDB.miniUrls.count().then(
-            (count) => {
+    async seedIfEmpty() {
+        try {
+            let count = await muDB.miniUrls.count();
+            if (count === 0) {
+                count = await muDB.hashIdInfo.count();
                 if (count === 0) {
-                    return muDB.hashIdInfo.count().then(
-                        (count) => {
-                            if (count === 0) {
-                                return muDB.hashIdInfo.insertOne({ _id: 'nextIdToGenerate', nextIdToGenerate: 0}).then(() => {
-                                    log.info('Seeding the database!');
-                                    return this.generateRandomIntIds();
-                                });
-                            } else {
-                                log.info('Seeding the database!');
-                                return this.generateRandomIntIds();
-                            }
-                        },
-                        () => {
-                            log.error('Could not get hashIdInfo count!');
-                        }
-                    );
+                    log.info('Seeding the database!');
+                    return this.generateRandomIntIds();
+                } else {
+                    log.info('Seeding the database!');
+                    return this.generateRandomIntIds();
                 }
-            },
-            () => {
-                log.error('Could not get MiniURL count!');
             }
-        );
+        } catch (err) {
+            log.error('Could not get hashIdInfo count!');
+        }
     }
 
     /**
@@ -48,7 +38,7 @@ class HashIdsRepository {
         return new Promise((resolve) => {
             let insertedSoFar = 0;
             let resolved = false;
-            const insertAtOnce = hashIds.insertAtOnce;
+            const insertAtOnce = hashIdsConstants.insertAtOnce;
 
             log.info('insertRandomIntIds - About to insert newly generated ID\'s!');
 
@@ -57,7 +47,7 @@ class HashIdsRepository {
              */
             let intervalId = setInterval(() => {
                 let bulk = muDB.miniUrls.initializeUnorderedBulkOp();
-                let insertUntil = (insertedSoFar + insertAtOnce) < hashIds.createAtOnce ? insertedSoFar + insertAtOnce : hashIds.createAtOnce;
+                let insertUntil = (insertedSoFar + insertAtOnce) < hashIdsConstants.createAtOnce ? insertedSoFar + insertAtOnce : hashIdsConstants.createAtOnce;
 
                 /**
                  * For performance gains by indexing URL with unique == true, we need to put unique values that are not
@@ -98,13 +88,13 @@ class HashIdsRepository {
                     }
                 );
 
-                if (insertedSoFar == hashIds.createAtOnce) {
+                if (insertedSoFar == hashIdsConstants.createAtOnce) {
                     log.info('insertRandomIntIds - Finished inserting newly generated ID\'s!');
                     clearInterval(intervalId);
                     intervalId = null;
                     this.setNextIdToGenerate();
                 }
-            }, hashIds.msBetweenBulks);
+            }, hashIdsConstants.msBetweenBulks);
         });
     }
 
@@ -158,17 +148,17 @@ class HashIdsRepository {
                 let timeStart = Date.now();
                 let randomInts = [];
 
-                for (let index = 0 ; index < hashIds.createAtOnce; index++) {
+                for (let index = 0 ; index < hashIdsConstants.createAtOnce; index++) {
                     randomInts.push(index + nextIdToGenerate);
                 }
 
-                for (let index = 0 ; index < hashIds.createAtOnce; index++) {
-                    var ran = Math.floor(Math.random() * (hashIds.createAtOnce - index)) + index;
+                for (let index = 0 ; index < hashIdsConstants.createAtOnce; index++) {
+                    var ran = Math.floor(Math.random() * (hashIdsConstants.createAtOnce - index)) + index;
                     var temp = randomInts[index];
                     randomInts[index] = randomInts[ran];
                     randomInts[ran] = temp;
                 }
-                log.info(`'Time it took: to randomize array of ${ hashIds.createAtOnce } integers to be used as id's: ${(Date.now()-timeStart)/1000} seconds`);
+                log.info(`'Time it took: to randomize array of ${ hashIdsConstants.createAtOnce } integers to be used as id's: ${(Date.now()-timeStart)/1000} seconds`);
 
                 return this.insertRandomIntIds(randomInts)
         });
@@ -184,7 +174,7 @@ class HashIdsRepository {
     isValidHash(hash) {
         let result = false;
 
-        if (hashIds.regExp.test(hash)) {
+        if (hashIdsConstants.regExp.test(hash)) {
             if (hash.length < 11) {
                 result  = true;
             } else if (hash.length == 11) {
@@ -196,7 +186,7 @@ class HashIdsRepository {
                  */
                 const maxHashValue = 'h9999999999';
                 for (let index = 0 ; index < 11 ; index++) {
-                    if (hashIds.base32Lookup.indexOf(hash[index]) <= hashIds.base32Lookup.indexOf(maxHashValue[index])) {
+                    if (hashIdsConstants.base32Lookup.indexOf(hash[index]) <= hashIdsConstants.base32Lookup.indexOf(maxHashValue[index])) {
                         result = true;
                         break;
                     }
@@ -225,7 +215,7 @@ class HashIdsRepository {
         do {
             let reminder = number % 32;
             number = Math.floor(number / 32);
-            result = hashIds.base32Lookup[reminder] + result;
+            result = hashIdsConstants.base32Lookup[reminder] + result;
         } while(number > 0);
 
         return result;
